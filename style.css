@@ -1,0 +1,26 @@
+#YearList {
+    padding: 0;
+    margin: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    overflow-x: scroll;
+    position: relative;
+}
+
+#YearList > li {
+    display: inline-block;
+    padding: 20px;
+}
+
+.HistoryEvent {
+    color: red;
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    cursor: pointer;
+}
+
+.HistoryEvent:hover {
+    background-color: red;
+    color: white;
+}
