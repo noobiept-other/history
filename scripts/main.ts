@@ -8,6 +8,7 @@ module Main {
 
 
 var CURRENT_EVENT: HTMLElement;
+var CURRENT_DESCRIPTION: HTMLElement;
 
 
 export function init()
@@ -33,36 +34,41 @@ export function init()
         // add all the history events
     for (a = 0 ; a < eventsContainer.children.length ; a++)
         {
-        var historyEvent = eventsContainer.children[ a ];
-        var releaseYear = parseInt( historyEvent.getAttribute( 'data-year' ), 10 );
+        var eventDescription = eventsContainer.children[ a ];
+        var releaseYear = parseInt( eventDescription.getAttribute( 'data-year' ), 10 );
+        var title = eventDescription.getAttribute( 'data-title' );
         var offset = releaseYear - startYear;
         var element = document.createElement( 'li' );
 
         element.className = 'HistoryEvent';
-        element.innerHTML = 'x';
-        element.title = historyEvent.getAttribute( 'data-title' );
+        element.innerHTML = title + '<br/>|';
+        element.title = title;
         element.style.left = (offset * elementWidth) + 'px';
-        element.addEventListener( 'click', (function( historyEvent )
+        element.addEventListener( 'click', (function( eventElement, descriptionElement )
             {
             return function()
                 {
-                showHistoryEvent( historyEvent );
+                showHistoryEvent( eventElement, descriptionElement );
                 }
-            })(historyEvent));
+            })(element, eventDescription));
 
         yearList.appendChild( element );
         }
     }
 
 
-function showHistoryEvent( infoElement: HTMLElement )
+function showHistoryEvent( eventElement: HTMLElement, descriptionElement: HTMLElement )
     {
     if ( CURRENT_EVENT )
         {
-        CURRENT_EVENT.classList.remove( 'ActiveDescription' );
+        CURRENT_EVENT.classList.remove( 'EventSelected' );
+        CURRENT_DESCRIPTION.classList.remove( 'ActiveDescription' );
         }
 
-    infoElement.classList.add( 'ActiveDescription' );
-    CURRENT_EVENT = infoElement;
+    eventElement.classList.add( 'EventSelected' );
+    descriptionElement.classList.add( 'ActiveDescription' );
+
+    CURRENT_EVENT = eventElement;
+    CURRENT_DESCRIPTION = descriptionElement;
     }
 }
