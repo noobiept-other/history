@@ -19,15 +19,25 @@ var Main;
         // figure out the width of each element
         var elementWidth = yearList.firstElementChild.clientWidth;
         var eventsContainer = document.getElementById('EventsContainer');
+        var alternate = true;
         // add all the history events
         for (a = 0; a < eventsContainer.children.length; a++) {
             var eventDescription = eventsContainer.children[a];
             var releaseYear = parseInt(eventDescription.getAttribute('data-year'), 10);
+            var releaseMonth = parseInt(eventDescription.getAttribute('data-month'), 10);
             var title = eventDescription.getAttribute('data-title');
-            var offset = releaseYear - startYear;
+            var offset = releaseYear - startYear + releaseMonth / 12;
             var element = document.createElement('li');
+            // alternate the distance from the event title to the year list
+            // so that there's no text overlap between close events
+            if (alternate) {
+                element.innerHTML = title + '<br/>|<br/>|';
+            }
+            else {
+                element.innerHTML = title + '<br/>|';
+            }
+            alternate = !alternate;
             element.className = 'HistoryEvent';
-            element.innerHTML = title + '<br/>|';
             element.title = title;
             element.style.left = (offset * elementWidth) + 'px';
             element.addEventListener('click', (function (eventElement, descriptionElement) {

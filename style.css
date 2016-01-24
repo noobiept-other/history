@@ -1,7 +1,7 @@
 #YearList {
     padding: 0;
     margin: 5px;
-    padding-top: 50px;
+    padding-top: 100px;
     white-space: nowrap;
     overflow: hidden;
     overflow-x: scroll;
@@ -16,7 +16,7 @@
 .HistoryEvent {
     color: gray;
     position: absolute;
-    top: -5px;
+    bottom: 25px;
     left: 0;
     cursor: pointer;
 }
