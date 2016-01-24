@@ -6,35 +6,19 @@ Main.init();
 
 module Main {
 
-interface HistoryEvent
-    {
-    year: number;
-    month: number;
-    title: string;
-    description: string;
-    }
 
-interface Data
-    {
-    startYear: number;
-    endYear: number;
-    events: HistoryEvent[]
-    }
+var CURRENT_EVENT: HTMLElement;
 
 
 export function init()
     {
-    getData( 'data.json', start );
-    }
-
-
-function start( info: Data )
-    {
     var yearList = document.getElementById( 'YearList' );
+    var startYear = parseInt( yearList.getAttribute( 'data-start' ), 10 );
+    var endYear = parseInt( yearList.getAttribute( 'data-end' ), 10 );
     var a;
 
         // add all the years to the list
-    for (a = info.startYear ; a < info.endYear + 1 ; a++)
+    for (a = startYear ; a < endYear + 1 ; a++)
         {
         var year = document.createElement( 'li' );
         year.innerHTML = a;
@@ -44,17 +28,19 @@ function start( info: Data )
 
         // figure out the width of each element
     var elementWidth = yearList.firstElementChild.clientWidth;
+    var eventsContainer = document.getElementById( 'EventsContainer' );
 
         // add all the history events
-    for (a = 0 ; a < info.events.length ; a++)
+    for (a = 0 ; a < eventsContainer.children.length ; a++)
         {
-        var historyEvent = info.events[ a ];
-        var offset = historyEvent.year - info.startYear;
+        var historyEvent = eventsContainer.children[ a ];
+        var releaseYear = parseInt( historyEvent.getAttribute( 'data-year' ), 10 );
+        var offset = releaseYear - startYear;
         var element = document.createElement( 'li' );
 
         element.className = 'HistoryEvent';
         element.innerHTML = 'x';
-        element.title = historyEvent.title;
+        element.title = historyEvent.getAttribute( 'data-title' );
         element.style.left = (offset * elementWidth) + 'px';
         element.addEventListener( 'click', (function( historyEvent )
             {
@@ -69,22 +55,14 @@ function start( info: Data )
     }
 
 
-function showHistoryEvent( info: HistoryEvent )
+function showHistoryEvent( infoElement: HTMLElement )
     {
-    var description = document.getElementById( 'Description' );
-    description.innerHTML = info.description;
-    }
-
-
-function getData( url: string, callback: (data: Data) => any )
-    {
-    var request = new XMLHttpRequest();
-
-    request.open( 'get', url, true );
-    request.addEventListener( 'load', function( event )
+    if ( CURRENT_EVENT )
         {
-        callback( JSON.parse( this.responseText ) );
-        });
-    request.send( null );
+        CURRENT_EVENT.classList.remove( 'ActiveDescription' );
+        }
+
+    infoElement.classList.add( 'ActiveDescription' );
+    CURRENT_EVENT = infoElement;
     }
 }

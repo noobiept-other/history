@@ -1,18 +1,9 @@
 Data Description
 ================
 
-Add a `data.json` file in the root directory with this format.
+To add a new history event, add an element to the `#EventsContainer` with the following format.
 
-    {
-        "startYear": number,
-        "endYear": number,
-        "events: [
-            {
-                "year": number,
-                "month: number,     // january= 1, etc
-                "title": string,
-                "description": string
-            },
-            // etc
-        ]
-    }
+    <div class="EventDescription" data-year="2016" data-title="The title.">
+        The description here.
+    </div>
+

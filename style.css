@@ -21,6 +21,13 @@
 }
 
 .HistoryEvent:hover {
-    background-color: red;
-    color: white;
+    transform: scale(1.2);
+}
+
+.EventDescription {
+    display: none;
+}
+
+.ActiveDescription {
+    display: block;
 }
