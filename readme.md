@@ -1,3 +1,19 @@
+Run
+===
+
+Either open the `index.html` or start a local web server at the root directory.
+
+For example with `python3`, you can run the command `python3 -m http.server` then open the `localhost:8000` url.
+
+
+Dependencies
+============
+
+- typescript `1.7`
+
+To compile run the `tsc` command in the root directory.
+
+
 Data Description
 ================
 
