@@ -90,6 +90,20 @@ export function init()
                 break;
             }
         });
+
+        // load all the images (the 'src' isn't set directly in html so that it doesn't delay the loading of the program)
+    var images = document.querySelectorAll( 'img' );
+
+    for (a = 0 ; a < images.length ; a++)
+        {
+        var image = <HTMLImageElement> images[ a ];
+        var src = image.getAttribute( 'data-src' );
+
+        if ( src )
+            {
+            image.src = src;
+            }
+        }
     }
 
 
