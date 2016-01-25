@@ -7,3 +7,9 @@ To add a new history event, add an element to the `#EventsContainer` with the fo
         The description here.
     </div>
 
+
+Keyboard Shortcuts
+==================
+
+- `left arrow`: Open the previous history event.
+- `right arrow`: Open the next history event.

@@ -3,8 +3,8 @@ window.onload = function () {
 };
 var Main;
 (function (Main) {
-    var CURRENT_EVENT;
-    var CURRENT_DESCRIPTION;
+    var ALL_EVENTS = [];
+    var CURRENT_POSITION = -1; // current selected event (position in the array above)
     function init() {
         var yearList = document.getElementById('YearList');
         var startYear = parseInt(yearList.getAttribute('data-start'), 10);
@@ -34,12 +34,16 @@ var Main;
             element.title = title;
             element.style.left = (offset * elementWidth + 20) + 'px'; // '20' is the padding, so it aligns with the text
             element.style.top = (topDiff * 25) + 'px';
-            element.addEventListener('click', (function (eventElement, descriptionElement) {
+            element.addEventListener('click', (function (position) {
                 return function () {
-                    showHistoryEvent(eventElement, descriptionElement);
+                    openEvent(position);
                 };
-            })(element, eventDescription));
+            })(a));
             yearList.appendChild(element);
+            ALL_EVENTS.push({
+                eventElement: element,
+                descriptionElement: eventDescription
+            });
             // alternate the top position value of the history event (so that the text doesn't overlap with other elements)
             topDiff++;
             if (topDiff > 3) {
@@ -47,19 +51,55 @@ var Main;
             }
         }
         // start with the last (most recent) event opened
-        var last = yearList.lastElementChild;
-        last.scrollIntoView();
-        last.click();
+        openEvent(ALL_EVENTS.length - 1);
+        // setup the keyboard shortcuts
+        document.addEventListener('keydown', function (event) {
+            switch (event.keyCode) {
+                case 37:
+                    openPreviousEvent();
+                    event.preventDefault();
+                    break;
+                case 39:
+                    openNextEvent();
+                    event.preventDefault();
+                    break;
+            }
+        });
     }
     Main.init = init;
-    function showHistoryEvent(eventElement, descriptionElement) {
-        if (CURRENT_EVENT) {
-            CURRENT_EVENT.classList.remove('EventSelected');
-            CURRENT_DESCRIPTION.classList.remove('ActiveDescription');
+    /**
+     * Open a specific history event.
+     */
+    function openEvent(position) {
+        if (CURRENT_POSITION >= 0) {
+            var previous = ALL_EVENTS[CURRENT_POSITION];
+            previous.eventElement.classList.remove('EventSelected');
+            previous.descriptionElement.classList.remove('ActiveDescription');
         }
-        eventElement.classList.add('EventSelected');
-        descriptionElement.classList.add('ActiveDescription');
-        CURRENT_EVENT = eventElement;
-        CURRENT_DESCRIPTION = descriptionElement;
+        CURRENT_POSITION = position;
+        var current = ALL_EVENTS[position];
+        current.eventElement.scrollIntoView();
+        current.eventElement.classList.add('EventSelected');
+        current.descriptionElement.classList.add('ActiveDescription');
+    }
+    /**
+     * Open the next event. If we're currently on the last one, then open the first.
+     */
+    function openNextEvent() {
+        var position = CURRENT_POSITION + 1;
+        if (position >= ALL_EVENTS.length) {
+            position = 0;
+        }
+        openEvent(position);
+    }
+    /**
+     * Open the previous event. If we're currently on the first one, then open the last one.
+     */
+    function openPreviousEvent() {
+        var position = CURRENT_POSITION - 1;
+        if (position < 0) {
+            position = ALL_EVENTS.length - 1;
+        }
+        openEvent(position);
     }
 })(Main || (Main = {}));

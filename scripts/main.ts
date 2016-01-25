@@ -7,8 +7,8 @@ Main.init();
 module Main {
 
 
-var CURRENT_EVENT: HTMLElement;
-var CURRENT_DESCRIPTION: HTMLElement;
+var ALL_EVENTS: { eventElement: HTMLElement, descriptionElement: HTMLElement }[] = [];
+var CURRENT_POSITION: number = -1;  // current selected event (position in the array above)
 
 
 export function init()
@@ -36,7 +36,7 @@ export function init()
         // add all the history events
     for (a = 0 ; a < eventsContainer.children.length ; a++)
         {
-        var eventDescription = eventsContainer.children[ a ];
+        var eventDescription = <HTMLElement> eventsContainer.children[ a ];
         var releaseYear = parseInt( eventDescription.getAttribute( 'data-year' ), 10 );
         var releaseMonth = parseInt( eventDescription.getAttribute( 'data-month' ), 10 );
         var title = eventDescription.getAttribute( 'data-title' );
@@ -48,15 +48,20 @@ export function init()
         element.title = title;
         element.style.left = (offset * elementWidth + 20) + 'px';   // '20' is the padding, so it aligns with the text
         element.style.top = (topDiff * 25) + 'px';
-        element.addEventListener( 'click', (function( eventElement, descriptionElement )
+        element.addEventListener( 'click', (function( position )
             {
             return function()
                 {
-                showHistoryEvent( eventElement, descriptionElement );
+                openEvent( position );
                 }
-            })(element, eventDescription));
+            })(a));
 
         yearList.appendChild( element );
+
+        ALL_EVENTS.push({
+            eventElement: element,
+            descriptionElement: eventDescription
+        });
 
             // alternate the top position value of the history event (so that the text doesn't overlap with other elements)
         topDiff++;
@@ -67,24 +72,78 @@ export function init()
         }
 
         // start with the last (most recent) event opened
-    var last = <any> yearList.lastElementChild;
-    last.scrollIntoView();
-    last.click();
+    openEvent( ALL_EVENTS.length - 1 );
+
+        // setup the keyboard shortcuts
+    document.addEventListener( 'keydown', function( event )
+        {
+        switch( event.keyCode )
+            {
+            case 37:    // left arrow
+                openPreviousEvent();
+                event.preventDefault();
+                break;
+
+            case 39:    // right arrow
+                openNextEvent();
+                event.preventDefault();
+                break;
+            }
+        });
     }
 
 
-function showHistoryEvent( eventElement: HTMLElement, descriptionElement: HTMLElement )
+/**
+ * Open a specific history event.
+ */
+function openEvent( position: number )
     {
-    if ( CURRENT_EVENT )
+    if ( CURRENT_POSITION >= 0 )
         {
-        CURRENT_EVENT.classList.remove( 'EventSelected' );
-        CURRENT_DESCRIPTION.classList.remove( 'ActiveDescription' );
+        var previous = ALL_EVENTS[ CURRENT_POSITION ];
+
+        previous.eventElement.classList.remove( 'EventSelected' );
+        previous.descriptionElement.classList.remove( 'ActiveDescription' );
         }
 
-    eventElement.classList.add( 'EventSelected' );
-    descriptionElement.classList.add( 'ActiveDescription' );
+    CURRENT_POSITION = position;
 
-    CURRENT_EVENT = eventElement;
-    CURRENT_DESCRIPTION = descriptionElement;
+    var current = ALL_EVENTS[ position ];
+
+    current.eventElement.scrollIntoView();
+    current.eventElement.classList.add( 'EventSelected' );
+    current.descriptionElement.classList.add( 'ActiveDescription' );
+    }
+
+
+/**
+ * Open the next event. If we're currently on the last one, then open the first.
+ */
+function openNextEvent()
+    {
+    var position = CURRENT_POSITION + 1;
+
+    if ( position >= ALL_EVENTS.length )
+        {
+        position = 0;
+        }
+
+    openEvent( position );
+    }
+
+
+/**
+ * Open the previous event. If we're currently on the first one, then open the last one.
+ */
+function openPreviousEvent()
+    {
+    var position = CURRENT_POSITION - 1;
+
+    if ( position < 0 )
+        {
+        position = ALL_EVENTS.length - 1;
+        }
+
+    openEvent( position );
     }
 }
