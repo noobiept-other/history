@@ -13,13 +13,14 @@ var Main;
         // add all the years to the list
         for (a = startYear; a < endYear + 1; a++) {
             var year = document.createElement('li');
+            year.className = 'Year';
             year.innerHTML = a;
             yearList.appendChild(year);
         }
         // figure out the width of each element
         var elementWidth = yearList.firstElementChild.clientWidth;
         var eventsContainer = document.getElementById('EventsContainer');
-        var alternate = true;
+        var topDiff = 1;
         // add all the history events
         for (a = 0; a < eventsContainer.children.length; a++) {
             var eventDescription = eventsContainer.children[a];
@@ -28,25 +29,27 @@ var Main;
             var title = eventDescription.getAttribute('data-title');
             var offset = releaseYear - startYear + releaseMonth / 12;
             var element = document.createElement('li');
-            // alternate the distance from the event title to the year list
-            // so that there's no text overlap between close events
-            if (alternate) {
-                element.innerHTML = title + '<br/>|<br/>|';
-            }
-            else {
-                element.innerHTML = title + '<br/>|';
-            }
-            alternate = !alternate;
             element.className = 'HistoryEvent';
+            element.innerHTML = title;
             element.title = title;
-            element.style.left = (offset * elementWidth) + 'px';
+            element.style.left = (offset * elementWidth + 20) + 'px'; // '20' is the padding, so it aligns with the text
+            element.style.top = (topDiff * 25) + 'px';
             element.addEventListener('click', (function (eventElement, descriptionElement) {
                 return function () {
                     showHistoryEvent(eventElement, descriptionElement);
                 };
             })(element, eventDescription));
             yearList.appendChild(element);
+            // alternate the top position value of the history event (so that the text doesn't overlap with other elements)
+            topDiff++;
+            if (topDiff > 3) {
+                topDiff = 1;
+            }
         }
+        // start with the last (most recent) event opened
+        var last = yearList.lastElementChild;
+        last.scrollIntoView();
+        last.click();
     }
     Main.init = init;
     function showHistoryEvent(eventElement, descriptionElement) {

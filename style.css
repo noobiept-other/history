@@ -1,6 +1,6 @@
 #YearList {
-    padding: 0;
     margin: 5px;
+    padding: 0;
     padding-top: 100px;
     white-space: nowrap;
     overflow: hidden;
@@ -8,16 +8,15 @@
     position: relative;
 }
 
-#YearList > li {
+.Year {
     display: inline-block;
     padding: 20px;
 }
 
 .HistoryEvent {
+    display: inline-block;
     color: gray;
     position: absolute;
-    bottom: 25px;
-    left: 0;
     cursor: pointer;
 }
 
